@@ -25,6 +25,8 @@ public class TaskRequest {
     @JsonAlias("assignedTo")
     private Long assignedToId;
 
+    private Long teamId;
+
     // Getters/Setters
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -43,4 +45,7 @@ public class TaskRequest {
 
     public Long getAssignedToId() { return assignedToId; }
     public void setAssignedToId(Long assignedToId) { this.assignedToId = assignedToId; }
+
+    public Long getTeamId() { return teamId; }
+    public void setTeamId(Long teamId) { this.teamId = teamId; }
 }

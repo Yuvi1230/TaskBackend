@@ -49,6 +49,11 @@ public class Task {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private User assignedTo;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "team_id", foreignKey = @ForeignKey(name = "FK_tasks_teams"))
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    private Team team;
+
     @OneToMany(mappedBy = "task",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
@@ -90,6 +95,9 @@ public class Task {
 
     public User getAssignedTo() { return assignedTo; }
     public void setAssignedTo(User assignedTo) { this.assignedTo = assignedTo; }
+
+    public Team getTeam() { return team; }
+    public void setTeam(Team team) { this.team = team; }
 
     public List<TaskComment> getComments() { return comments; }
 

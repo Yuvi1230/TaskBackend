@@ -45,7 +45,14 @@ public class AuthController {
         User u = principal.getUser();
 
         String token = jwt.generateToken(u.getEmail(),
-                Map.of("uid", u.getId(), "name", u.getFullName()));
+                Map.of(
+                        "userId", u.getId(),
+                        "fullName", u.getFullName(),
+                        "role", u.getRole() != null ? u.getRole().name() : null,
+                        // backward-compat (older Angular builds)
+                        "uid", u.getId(),
+                        "name", u.getFullName()
+                ));
 
         return ResponseEntity.ok(new AuthResponse(token, u.getId(), u.getFullName(), u.getEmail()));
     }

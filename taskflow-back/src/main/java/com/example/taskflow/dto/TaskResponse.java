@@ -31,6 +31,8 @@ public class TaskResponse {
     private Long assignedToId;
     private String assignedToName;
     private Assignee assignee;
+    private Long teamId;
+    private String teamName;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -46,6 +48,8 @@ public class TaskResponse {
             String ownerName,
             Long assignedToId,
             String assignedToName,
+            Long teamId,
+            String teamName,
             Instant createdAt,
             Instant updatedAt
     ) {
@@ -62,6 +66,8 @@ public class TaskResponse {
         this.assignee = assignedToId != null
                 ? new Assignee(assignedToId, assignedToName)
                 : null;
+        this.teamId = teamId;
+        this.teamName = teamName;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -78,6 +84,8 @@ public class TaskResponse {
     public Long getAssignedToId() { return assignedToId; }
     public String getAssignedToName() { return assignedToName; }
     public Assignee getAssignee() { return assignee; }
+    public Long getTeamId() { return teamId; }
+    public String getTeamName() { return teamName; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }

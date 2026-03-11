@@ -6,6 +6,7 @@ import com.example.taskflow.domain.User;
 import com.example.taskflow.dto.TaskRequest;
 import com.example.taskflow.dto.TaskResponse;
 import com.example.taskflow.dto.TaskSummaryResponse;
+import com.example.taskflow.repository.TeamRepository;
 import com.example.taskflow.repository.UserRepository;
 import com.example.taskflow.security.UserPrincipal;
 import com.example.taskflow.service.TaskService;
@@ -22,10 +23,12 @@ public class TaskController {
 
     private final TaskService tasks;
     private final UserRepository userRepo;
+    private final TeamRepository teamRepo;
 
-    public TaskController(TaskService tasks, UserRepository userRepo) {
+    public TaskController(TaskService tasks, UserRepository userRepo, TeamRepository teamRepo) {
         this.tasks = tasks;
         this.userRepo = userRepo;
+        this.teamRepo = teamRepo;
     }
 
     private User currentUser() {
@@ -46,7 +49,9 @@ public class TaskController {
                 t.getOwner().getId(),
                 t.getOwner().getFullName(),
                 t.getAssignedTo() != null ? t.getAssignedTo().getId() : null,
-                t.getAssignedTo() != null ? t.getAssignedTo().getFullName():null,
+                t.getAssignedTo() != null ? t.getAssignedTo().getFullName() : null,
+                t.getTeam() != null ? t.getTeam().getId() : null,
+                t.getTeam() != null ? t.getTeam().getName() : null,
                 t.getCreatedAt(),
                 t.getUpdatedAt()
         );
@@ -84,6 +89,12 @@ public class TaskController {
             t.setAssignedTo(assignedTo);
         }
 
+        if (req.getTeamId() != null) {
+            var team = teamRepo.findById(req.getTeamId())
+                    .orElseThrow(() -> new IllegalArgumentException("team not found"));
+            t.setTeam(team);
+        }
+
         Task saved = tasks.create(user, t);
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
@@ -113,6 +124,14 @@ public class TaskController {
             User assignedTo = userRepo.findById(req.getAssignedToId())
                     .orElseThrow(() -> new IllegalArgumentException("user not found"));
             updated.setAssignedTo(assignedTo);
+        }
+
+        if (req.getTeamId() != null) {
+            var team = teamRepo.findById(req.getTeamId())
+                    .orElseThrow(() -> new IllegalArgumentException("team not found"));
+            updated.setTeam(team);
+        } else {
+            updated.setTeam(null);
         }
 
         Task saved = tasks.update(user, id, updated);

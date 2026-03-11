@@ -63,4 +63,20 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
         """, 
         nativeQuery = true)
     double completionRateByOwnerId(@Param("ownerId") Long ownerId);
+
+    @Query(value = """
+        SELECT DISTINCT t.*
+        FROM tasks t
+        LEFT JOIN team_members tm ON tm.team_id = t.team_id
+        WHERE t.user_id = :userId
+           OR t.assigned_to = :userId
+           OR tm.user_id = :userId
+        """, nativeQuery = true)
+    List<Task> findVisibleTasks(@Param("userId") Long userId);
+
+    @Query(value = "SELECT COUNT(*) FROM tasks WHERE team_id = :teamId AND status <> 'DONE'", nativeQuery = true)
+    long countActiveByTeamId(@Param("teamId") Long teamId);
+
+    @Query(value = "SELECT COUNT(*) FROM tasks WHERE team_id = :teamId AND assigned_to = :userId", nativeQuery = true)
+    long countAssignedToUserInTeam(@Param("teamId") Long teamId, @Param("userId") Long userId);
 }
