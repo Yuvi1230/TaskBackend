@@ -192,7 +192,8 @@ public class UserSettingsService {
         return preferences.findById(user.getId())
                 .orElseGet(() -> {
                     UserPreference pref = new UserPreference();
-                    pref.setUser(user);
+                    // Security principal holds a detached User instance; use a managed reference.
+                    pref.setUser(users.getReferenceById(user.getId()));
                     return preferences.save(pref);
                 });
     }
