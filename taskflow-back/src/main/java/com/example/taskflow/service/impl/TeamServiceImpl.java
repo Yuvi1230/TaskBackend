@@ -6,6 +6,7 @@ import com.example.taskflow.domain.TeamMember;
 import com.example.taskflow.domain.TeamMemberId;
 import com.example.taskflow.domain.User;
 import com.example.taskflow.dto.TeamCreateRequest;
+import com.example.taskflow.dto.TeamUpdateRequest;
 import com.example.taskflow.exception.ForbiddenException;
 import com.example.taskflow.exception.ResourceNotFoundException;
 import com.example.taskflow.repository.TeamMemberRepository;
@@ -60,6 +61,29 @@ public class TeamServiceImpl implements TeamService {
         }
 
         return saved;
+    }
+
+    @Override
+    @Transactional
+    public Team updateTeam(User actor, Long teamId, TeamUpdateRequest req) {
+        Team team = teams.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+
+        if (!canManage(actor, team)) {
+            throw new ForbiddenException("You cannot manage this team");
+        }
+
+        team.setName(req.getName().trim());
+        team.setDescription(req.getDescription());
+
+        if (req.getManagerId() != null && !req.getManagerId().equals(team.getManager().getId())) {
+            User newManager = users.findById(req.getManagerId())
+                    .orElseThrow(() -> new IllegalArgumentException("manager not found"));
+            team.setManager(newManager);
+            ensureMember(team, newManager);
+        }
+
+        return teams.save(team);
     }
 
     @Override
@@ -126,6 +150,8 @@ public class TeamServiceImpl implements TeamService {
         if (!canManage(actor, t)) {
             throw new ForbiddenException("You cannot delete this team");
         }
+        teamMembers.deleteByIdTeamId(teamId);
+        teamMembers.flush();
         teams.delete(t);
     }
 
@@ -147,4 +173,3 @@ public class TeamServiceImpl implements TeamService {
         teamMembers.save(new TeamMember(team, user));
     }
 }
-

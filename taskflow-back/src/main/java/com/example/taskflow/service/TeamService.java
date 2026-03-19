@@ -3,6 +3,7 @@ package com.example.taskflow.service;
 import com.example.taskflow.domain.Team;
 import com.example.taskflow.domain.User;
 import com.example.taskflow.dto.TeamCreateRequest;
+import com.example.taskflow.dto.TeamUpdateRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -11,6 +12,9 @@ public interface TeamService {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     Team createTeam(User actor, TeamCreateRequest req);
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    Team updateTeam(User actor, Long teamId, TeamUpdateRequest req);
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','MEMBER','VIEWER')")
     List<Team> listTeams(User actor);
@@ -27,4 +31,3 @@ public interface TeamService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     void deleteTeam(User actor, Long teamId);
 }
-

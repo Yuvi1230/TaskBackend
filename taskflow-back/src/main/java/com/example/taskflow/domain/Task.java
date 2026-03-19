@@ -60,6 +60,11 @@ public class Task {
             fetch = FetchType.LAZY)
     private List<TaskComment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "task",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private java.util.List<TaskAttachment> attachments = new java.util.ArrayList<>();
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 

@@ -78,6 +78,12 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TeamResponse> update(@PathVariable Long id, @Valid @RequestBody TeamUpdateRequest req) {
+        Team updated = teams.updateTeam(currentUser(), id, req);
+        return ResponseEntity.ok(toResponse(updated));
+    }
+
     @GetMapping
     public ResponseEntity<List<TeamResponse>> list() {
         List<TeamResponse> result = teams.listTeams(currentUser())

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
@@ -36,7 +37,20 @@ public class JwtTokenService {
     }
 
     public String getSubject(String token) {
+        return parseClaims(token).getSubject();
+    }
+
+    public String getJti(String token) {
+        return parseClaims(token).getId();
+    }
+
+    public Instant getExpiration(String token) {
+        Date exp = parseClaims(token).getExpiration();
+        return exp != null ? exp.toInstant() : Instant.now();
+    }
+
+    public Claims parseClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().getSubject();
+                .parseClaimsJws(token).getBody();
     }
 }
