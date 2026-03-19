@@ -6,9 +6,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
 
 @Entity
 @Table(name = "user_preferences")
@@ -18,9 +18,8 @@ public class UserPreference {
     @Column(name = "user_id")
     private Long userId;
 
-    @OneToOne(optional = false)
-    @MapsId
-    @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -49,6 +48,7 @@ public class UserPreference {
     private String bio;
 
     public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
